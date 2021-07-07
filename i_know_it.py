@@ -36,6 +36,8 @@ class CompetitorInstance():
         self.magics_knows = list(range(8, 24))
         random.shuffle(self.magics_knows)
 
+        self.enemy = set()
+
     def onAuctionStart(self, index, true_value):
         # index is the current player's index, that usually stays put from game to game
         # trueValue is -1 if this bot doesn't know the true value
@@ -56,7 +58,7 @@ class CompetitorInstance():
         self.teammate_knows_yes = dict()
         self.teammate_knows_no = set()
         self.teammate_all = set()
-        self.non_npc = set()
+        # self.enemy = set()
 
         self.has_identified_teammates = False
         self.broadcast = False
@@ -144,7 +146,7 @@ class CompetitorInstance():
                 self.team_hold_it = False
 
         if not (8 <= actual_magic <= 23):
-            self.non_npc.add(who_made_bid)
+            self.enemy.add(who_made_bid)
 
         if who_made_bid < self.index:
             self.bid_info[who_made_bid][self.round] = how_much
@@ -248,7 +250,7 @@ class CompetitorInstance():
 
         teammate = list(self.teammate_knows) + list(self.teammate_dknows)
         teammate_knows = list(self.teammate_knows)
-        non_npc = list(self.non_npc)
+        non_npc = list(self.enemy)
 
         self.engine.print("knows: {}".format(teammate_knows))
         self.engine.print("teammates: {}".format(teammate))
