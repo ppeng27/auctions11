@@ -220,6 +220,12 @@ class CompetitorInstance():
                 if random.random() < pr and last_bid + magic <= self.mean:
                     self.engine.makeBid(last_bid + magic)
             # already identify all roles (and someone knows true value)
+            # end game strategy
+            elif self.recv_true_value and self.true_value - 30 <= last_bid <= self.true_value - 8:
+                if last_bid <= self.true_value - 15:
+                    self.engine.makeBid(self.true_value - 7)
+                else:
+                    self.engine.makeBid(last_bid + 8)
             # random hit or no teammate holds it
             elif random.random() < pr or not self.team_hold_it:
                 # haven't receive broadcasted true value yet
@@ -227,12 +233,6 @@ class CompetitorInstance():
                     # not too expensive
                     if last_bid + magic_random <= self.mean:
                         self.engine.makeBid(last_bid + magic_random)
-                # end game strategy
-                elif self.true_value - 30 <= last_bid <= self.true_value - 8:
-                    if last_bid <= self.true_value - 15:
-                        self.engine.makeBid(self.true_value - 7)
-                    else:
-                        self.engine.makeBid(last_bid + 8)
                 # received broadcasted true value
                 # and not too expensive
                 elif last_bid + magic_random <= self.true_value:
