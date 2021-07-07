@@ -1,7 +1,3 @@
-# import random
-# import math
-# import time
-
 random = None
 math = None
 time = None
@@ -101,7 +97,7 @@ class CompetitorInstance():
                 teammate_knows_yes.add(who)
             else:
                 teammate_knows_no.add(who)
-            if not (8 <= bid <= 23):
+            if not (8 <= actual_magic <= 23):
                 non_npc.add(who)
             lastBid = bid
 
