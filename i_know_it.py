@@ -61,6 +61,7 @@ class CompetitorInstance():
         self.has_identified_teammates = False
         self.broadcast = False
         self.team_hold_it = False
+        self.no_one_knows = False
 
     def onBidMade(self, who_made_bid, how_much):
         # whoMadeBid is the index of the player that made the bid
@@ -68,20 +69,28 @@ class CompetitorInstance():
 
         actual_magic = how_much - self.last_bid
 
-        if self.broadcast:
-            if self.knows_true_value and who_made_bid == self.index:
-                self.broadcast = False
-            elif len(self.teammate_knows) == 0:
-                self.engine.print("no one knows true value")
-                self.broadcast = False
-            elif who_made_bid in self.teammate_knows:
+        if self.broadcast and not self.knows_true_value:
+            if who_made_bid in self.teammate_knows:
                 index = self.magics_knows.index(actual_magic)
-                z = index / 8 - 1
-                self.true_value = z * self.stddev + self.mean
-                self.recv_true_value = True
-                self.engine.print('recv true value ({}) from ({})'.format(
-                    self.true_value, who_made_bid))
-                self.broadcast = False
+                if index == 15:
+                    self.recv_true_value = True
+                    self.broadcast = False
+                    self.true_value = math.ceil(self.broadcast_value)
+                    self.engine.print('recv value {}'.format(self.true_value))
+                elif index == 14:
+                    self.recv_true_value = True
+                    self.broadcast = False
+                    self.true_value = math.floor(self.broadcast_value)
+                    self.engine.print('recv value {}'.format(self.true_value))
+                else:
+                    if self.broadcast_value == self.mean:
+                        z = index / 7 - 1
+                    else:
+                        z = index / 14
+                    self.broadcast_value = z * self.broadcast_stddev + self.broadcast_value
+                    self.broadcast_stddev = self.broadcast_stddev / 5
+                    self.engine.print('recv value z({}) i({}) v({}) stddev({}) by ({})'.format(
+                        z, index, self.broadcast_value, self.broadcast_stddev, self.index))
 
         expect_magic = self.magics[math.floor(
             self.last_bid) % len(self.magics)]
@@ -119,8 +128,14 @@ class CompetitorInstance():
                         self.has_identified_teammates = False
 
             if self.has_identified_teammates and not self.broadcast:
-                self.engine.print("broadcast!")
-                self.broadcast = True
+                if len(self.teammate_knows) == 1:
+                    self.engine.print("broadcast!")
+                    self.broadcast = True
+                    self.broadcast_value = self.mean
+                    self.broadcast_stddev = self.stddev
+                else:
+                    # no one knows true value
+                    self.no_one_knows = True
 
         if self.has_identified_teammates:
             if who_made_bid in self.teammate_all:
@@ -148,37 +163,80 @@ class CompetitorInstance():
         magic = self.magics[math.floor(last_bid) % len(self.magics)]
         magic_knows = self.magics_knows[math.floor(
             last_bid) % len(self.magics_knows)]
+        magic_random = random.randint(8, 23)
+
         pr = 32/50
         if last_bid > self.mean/4:
             pr = 16/100
         if last_bid > self.mean*3/4:
             pr = 2/50
 
-        if self.broadcast:
-            if self.knows_true_value:
-                z = (self.true_value - self.mean) / self.stddev
-                index = math.floor((z + 1) * 8)
-                self.engine.makeBid(last_bid + self.magics_knows[index])
+        if self.no_one_knows:
+            if random.random() < pr and last_bid + magic_random <= self.mean:
+                self.engine.makeBid(last_bid + magic_random)
+            return
+
+        if self.broadcast and self.knows_true_value:
+            if abs(self.broadcast_value - self.true_value) < 1:
+                if self.true_value > self.broadcast_value:
+                    self.engine.makeBid(last_bid + self.magics_knows[15])
+                else:
+                    self.engine.makeBid(last_bid + self.magics_knows[14])
+                self.broadcast = False
+                return
+            z = (self.true_value - self.broadcast_value) / \
+                self.broadcast_stddev
+            if self.broadcast_value == self.mean:
+                index = math.floor((z + 1) * 7)
+                self.broadcast_value = (index / 7 - 1) * \
+                    self.broadcast_stddev + self.broadcast_value
             else:
-                self.engine.makeBid(last_bid + magic)
+                index = math.floor(z * 14)
+                self.broadcast_value = (index / 14) * \
+                    self.broadcast_stddev + self.broadcast_value
+            self.broadcast_stddev /= 5
+            if 0 <= index < 14:
+                self.engine.makeBid(last_bid + self.magics_knows[index])
+                self.engine.print('send value z({}) i({}) v({}) stddev({}) from ({})'.format(
+                    z, index, self.broadcast_value, self.broadcast_stddev, self.index))
+            elif index < 0:
+                self.engine.makeBid(last_bid + self.magics_knows[14])
+                self.broadcast = False
+            else:
+                self.engine.makeBid(last_bid + self.magics_knows[15])
+                self.broadcast = False
             return
 
         # don't know true value
         if not self.knows_true_value:
-            # already know who are the teammates but no team mate holds it
-            # or random hit
-            if not self.team_hold_it or random.random() < pr:
-                # have been broadcasted
-                if self.recv_true_value and last_bid + magic <= self.true_value:
+            # hasn't identified roles
+            if not self.has_identified_teammates:
+                # random and small enough
+                if random.random() < pr and last_bid + magic <= self.mean:
                     self.engine.makeBid(last_bid + magic)
-                # haven't been broadcasted
-                if not self.recv_true_value and last_bid + magic <= self.mean:
-                    self.engine.makeBid(last_bid + magic)
+            # already identify all roles (and someone knows true value)
+            # random hit or no teammate holds it
+            elif random.random() < pr or not self.team_hold_it:
+                # haven't receive broadcasted true value yet
+                if not self.recv_true_value:
+                    # not too expensive
+                    if last_bid + magic_random <= self.mean:
+                        self.engine.makeBid(last_bid + magic_random)
+                # received broadcasted true value
+                # and not too expensive
+                elif last_bid + magic_random <= self.true_value:
+                    self.engine.makeBid(last_bid + magic_random)
+            return
+
+        # randomise magic
+        if self.has_identified_teammates:
+            magic_knows = magic_random
+
         # know true value
         if self.knows_true_value:
-            # no teammate holds it
+            # no teammate holds it or random hit
             # and price not very high
-            if not self.team_hold_it and last_bid + magic_knows <= self.true_value - 50:
+            if (random.random() < pr or not self.team_hold_it) and last_bid + magic_knows <= self.true_value - 50:
                 self.engine.makeBid(last_bid + magic_knows)
 
     def onAuctionEnd(self):
