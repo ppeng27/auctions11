@@ -68,7 +68,6 @@ class CompetitorInstance():
             pr = 16/100
         if lastBid > self.mean*3/4:
             pr = 2/50
-        hasBidden = False
         if not self.knowsTrueValue and random.random() < pr:
             self.engine.makeBid(lastBid + magic)
         if self.knowsTrueValue and lastBid + magic_knows <= self.trueValue - 50:
@@ -78,8 +77,13 @@ class CompetitorInstance():
     def onAuctionEnd(self):
         # Now is the time to report team members, or do any cleanup.
         # print(self.index, self.round)
-        teammate = set(range(self.numPlayers))
-        teammate_knows = set(range(self.numPlayers))
+
+        teammate_no = set()
+        teammate_yes = set()
+
+        teammate_knows_no = set()
+        teammate_knows_yes = set()
+
         non_npc = set()
 
         lastBid = 1
@@ -88,23 +92,36 @@ class CompetitorInstance():
                 lastBid) % len(self.magics)]
             expect_magic_knows = self.magics_knows[math.floor(
                 lastBid) % len(self.magics_knows)]
-            if bid - lastBid != expect_magic:
-                teammate.discard(who)
-            if bid - lastBid != expect_magic_knows:
-                teammate_knows.discard(who)
+            actual_magic = bid - lastBid
+            if actual_magic == expect_magic:
+                teammate_yes.add(who)
+            else:
+                teammate_no.add(who)
+            if actual_magic == expect_magic_knows:
+                teammate_knows_yes.discard(who)
+            else:
+                teammate_knows_no.add(who)
             if not (8 <= bid <= 23):
                 non_npc.add(who)
             lastBid = bid
 
-        teammate = list(teammate)
-        teammate_knows = list(teammate_knows)
+        teammate = list(teammate_yes - teammate_no)
+        teammate_knows = list(teammate_knows_yes - teammate_knows_no)
         non_npc = list(non_npc)
 
         if len(teammate_knows) > 1:
+            print("too much teammate_knows")
+            print(teammate_knows_yes)
+            print(teammate_knows_no)
             teammate_knows = []
         if len(teammate) > 3:
+            print("too much teammate")
+            print(teammate_yes)
+            print(teammate_no)
             teammate = []
         if len(non_npc) > 6:
+            print("too much non_npc")
+            print(non_npc)
             non_npc = []
 
         self.engine.reportTeams(
