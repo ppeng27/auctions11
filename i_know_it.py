@@ -182,6 +182,7 @@ class CompetitorInstance():
                     self.engine.makeBid(last_bid + self.magics_knows[15])
                 else:
                     self.engine.makeBid(last_bid + self.magics_knows[14])
+                self.engine.print('send value {}'.format(self.true_value))
                 self.broadcast = False
                 return
             z = (self.true_value - self.broadcast_value) / \
@@ -201,9 +202,11 @@ class CompetitorInstance():
                     z, index, self.broadcast_value, self.broadcast_stddev, self.index))
             elif index < 0:
                 self.engine.makeBid(last_bid + self.magics_knows[14])
+                self.engine.print('send value {}'.format(self.true_value))
                 self.broadcast = False
             else:
                 self.engine.makeBid(last_bid + self.magics_knows[15])
+                self.engine.print('send value {}'.format(self.true_value))
                 self.broadcast = False
             return
 
