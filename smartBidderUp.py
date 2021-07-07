@@ -98,7 +98,7 @@ class CompetitorInstance():
             else:
                 teammate_no.add(who)
             if actual_magic == expect_magic_knows:
-                teammate_knows_yes.discard(who)
+                teammate_knows_yes.add(who)
             else:
                 teammate_knows_no.add(who)
             if not (8 <= bid <= 23):
