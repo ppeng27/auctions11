@@ -231,7 +231,7 @@ class CompetitorInstance():
                 elif self.true_value - 30 <= last_bid <= self.true_value - 8:
                     if last_bid <= self.true_value - 15:
                         self.engine.makeBid(self.true_value - 7)
-                    else:
+                    elif not self.team_hold_it:
                         self.engine.makeBid(last_bid + 8)
                 # received broadcasted true value
                 # and not too expensive
