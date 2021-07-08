@@ -1,7 +1,3 @@
-# import random
-# import math
-# import time
-
 random = None
 math = None
 time = None
@@ -174,7 +170,7 @@ class CompetitorInstance():
             pr = 2/50
 
         if self.no_one_knows:
-            if random.random() < pr and last_bid + magic_random <= self.mean:
+            if random.random() < pr:  # and last_bid + magic_random <= self.mean:
                 self.engine.makeBid(last_bid + magic_random)
             return
 
