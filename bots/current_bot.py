@@ -60,6 +60,7 @@ class CompetitorInstance():
         self.broadcast = False
         self.team_hold_it = False
         self.no_one_knows = False
+        self.sacrifice = False
 
     def onBidMade(self, who_made_bid, how_much):
         # whoMadeBid is the index of the player that made the bid
@@ -131,9 +132,13 @@ class CompetitorInstance():
                     self.broadcast = True
                     self.broadcast_value = self.mean
                     self.broadcast_stddev = self.stddev
+                    if self.index == min(self.teammate_dknows):
+                        self.sacrifice = True
                 else:
                     # no one knows true value
                     self.no_one_knows = True
+                    if self.index == min(self.teammate_dknows):
+                        self.sacrifice = True
 
         if self.has_identified_teammates:
             if who_made_bid in self.teammate_all:
@@ -170,7 +175,7 @@ class CompetitorInstance():
             pr = 2/50
 
         if self.no_one_knows:
-            if random.random() < pr:  # and last_bid + magic_random <= self.mean:
+            if random.random() < pr or (self.sacrifice and not self.team_hold_it):  # and last_bid + magic_random <= self.mean:
                 self.engine.makeBid(last_bid + magic_random)
             return
 
@@ -216,23 +221,37 @@ class CompetitorInstance():
                 if random.random() < pr and last_bid + magic <= self.mean:
                     self.engine.makeBid(last_bid + magic)
             # already identify all roles (and someone knows true value)
-            # end game strategy
-            elif self.recv_true_value and self.true_value - 30 <= last_bid <= self.true_value - 8:
-                if last_bid <= self.true_value - 15:
-                    self.engine.makeBid(self.true_value - 7)
-                else:
-                    self.engine.makeBid(last_bid + 8)
-            # random hit or no teammate holds it
-            elif random.random() < pr or not self.team_hold_it:
-                # haven't receive broadcasted true value yet
-                if not self.recv_true_value:
+            # haven't finished braodcast yet
+            elif not self.recv_true_value:
+                # random hit
+                if random.random() < pr:
                     # not too expensive
                     if last_bid + magic_random <= self.mean:
                         self.engine.makeBid(last_bid + magic_random)
-                # received broadcasted true value
+            # already receive broadcasted true value
+            else:  # if self.recv_true_value:
+                # not sacrifice
+                if not self.sacrifice:
+                    # random hit
+                    if random.random() < pr:
+                        # not too expensive
+                        if last_bid + magic_random <= self.true_value:
+                            self.engine.makeBid(last_bid + magic_random)
+                # sacrifice (always tend to bid)
+                # end game strategy
+                elif self.true_value - 30 <= last_bid <= self.true_value - 8:
+                    if last_bid <= self.true_value - 15:
+                        self.engine.makeBid(self.true_value - 7)
+                    else:
+                        self.engine.makeBid(last_bid + 8)
+                # not end game
                 # and not too expensive
-                elif last_bid + magic_random <= self.true_value:
+                # (always tend to bid)
+                elif (random.random() < pr or not self.team_hold_it) and last_bid + magic_random <= self.true_value:
                     self.engine.makeBid(last_bid + magic_random)
+            # # no teammate holds it
+            # elif not self.team_hold_it:
+            #     pass
             return
 
         # randomise magic
@@ -243,7 +262,7 @@ class CompetitorInstance():
         if self.knows_true_value:
             # no teammate holds it or random hit
             # and price not very high
-            if (random.random() < pr or not self.team_hold_it) and last_bid + magic_knows <= self.true_value - 50:
+            if random.random() < pr and last_bid + magic_knows <= self.true_value - 50:
                 self.engine.makeBid(last_bid + magic_knows)
 
     def onAuctionEnd(self):
@@ -265,10 +284,17 @@ class CompetitorInstance():
         if len(non_npc) > 6:
             non_npc = []
 
-        self.engine.reportTeams(
-            teammate,
-            non_npc,
-            teammate_knows
-        )
+        if self.sacrifice:
+            self.engine.reportTeams(
+                teammate,
+                non_npc,
+                teammate_knows + list(set(range(10)) - self.teammate_all)
+            )
+        else:
+            self.engine.reportTeams(
+                teammate,
+                non_npc,
+                teammate_knows
+            )
         self.auction += 1
         return
