@@ -90,9 +90,11 @@ class Analyser:
         m1, b1 = np.polyfit(np.array(self.x_coors), np.array(self.freqs), 1)
         m2, b2 = np.polyfit(np.array(self.x_coors), np.array(self.skews), 1)
 
-        plt.scatter(1, self.freqs[0], alpha=0.5, label='Phase 1 | {}'.format(self.freqs[0]))
-        plt.scatter(2, self.freqs[1], alpha=0.5, label='Phase 2 | {}'.format(self.freqs[1]))
-        plt.scatter(3, self.freqs[2], alpha=0.5, label='Phase 3 | {}'.format(self.freqs[2]))
+        plt.xticks(np.arange(min(self.x_coors), max(self.x_coors)+1, 1.0))
+
+        plt.scatter(1, self.freqs[0], alpha=0.5, label='Phase 1 | {:.2f}%'.format(self.freqs[0] * 100))
+        plt.scatter(2, self.freqs[1], alpha=0.5, label='Phase 2 | {:.2f}%'.format(self.freqs[1] * 100))
+        plt.scatter(3, self.freqs[2], alpha=0.5, label='Phase 3 | {:.2f}%'.format(self.freqs[2] * 100))
 
         plt.scatter(1, self.skews[0], alpha=0.5, label='Phase 1 Skew | {}'.format(self.skews[0]))
         plt.scatter(2, self.skews[1], alpha=0.5, label='Phase 2 Skew | {}'.format(self.skews[1]))
