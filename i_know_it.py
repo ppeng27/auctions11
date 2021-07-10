@@ -137,6 +137,8 @@ class CompetitorInstance():
                 else:
                     # no one knows true value
                     self.no_one_knows = True
+                    if self.index == min(self.teammate_dknows):
+                        self.sacrifice = True
 
         if self.has_identified_teammates:
             if who_made_bid in self.teammate_all:
@@ -173,7 +175,7 @@ class CompetitorInstance():
             pr = 2/50
 
         if self.no_one_knows:
-            if random.random() < pr:  # and last_bid + magic_random <= self.mean:
+            if random.random() < pr or (self.sacrifice and not self.team_hold_it):  # and last_bid + magic_random <= self.mean:
                 self.engine.makeBid(last_bid + magic_random)
             return
 
@@ -282,10 +284,17 @@ class CompetitorInstance():
         if len(non_npc) > 6:
             non_npc = []
 
-        self.engine.reportTeams(
-            teammate,
-            non_npc,
-            teammate_knows
-        )
+        if self.sacrifice:
+            self.engine.reportTeams(
+                teammate,
+                non_npc,
+                teammate_knows + list(set(range(10)) - self.teammate_all)
+            )
+        else:
+            self.engine.reportTeams(
+                teammate,
+                non_npc,
+                teammate_knows
+            )
         self.auction += 1
         return
