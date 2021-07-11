@@ -6,36 +6,30 @@ import numpy as np
 import time
 
 
+data = '["TheLarpers","SmashBros","carl"]//NPC,TheLarpers,TheLarpers,NPC,carl,SmashBros,carl,carl,SmashBros,TheLarpers|6238|1739/t:6534|k:1|k:6|6:1|6:97|7:156|8:174|9:201|0:213|1:277|2:349|3:361|5:379|6:432|7:491|8:505|9:547|0:563|1:593|2:638|3:658|5:672|6:725|7:784|8:824|0:834|1:887|3:897|5:937|6:990|7:1049|8:1070|0:1092|1:1110|5:1131|6:1184|7:1243|8:1264|9:1304|3:1318|5:1339|6:1392|7:1451|8:1472|9:1513|0:1529|2:1569|3:1578|5:1599|6:1652|7:1711|8:1732|9:1768|0:1776|2:1817|3:1828|5:1849|6:1902|7:1961|8:1982|9:2011|5:2032|6:2085|7:2144|8:2165|9:2192|5:2213|6:2266|7:2325|8:2346|9:2388|5:2409|6:2462|7:2521|8:2542|9:2566|5:2587|6:2640|7:2699|8:2720|9:2745|5:2766|6:2819|7:2878|8:2899|9:2937|5:2958|6:3011|7:3070|8:3091|9:3117|5:3138|6:3191|7:3250|8:3271|9:3306|5:3327|6:3380|7:3439|8:3460|9:3485|5:3506|6:3559|7:3618|8:3639|9:3670|5:3691|6:3744|7:3803|8:3824|9:3865|5:3886|6:3939|7:3998|8:4019|9:4058|3:4077|5:4098|6:4151|7:4210|8:4231|9:4271|5:4292|6:4345|7:4404|8:4425|9:4450|3:4469|5:4490|6:4543|7:4602|8:4623|9:4652|3:4661|5:4682|6:4735|7:4794|8:4815|9:4839|5:4860|6:4913|7:4972|8:4993|9:5031|5:5052|6:5105|7:5164|8:5185|9:5221|5:5242|6:5295|7:5354|8:5375|9:5405|5:5426|6:5479|7:5538|8:5559|9:5590|5:5611|6:5664|7:5723|9:5761|6:5814|7:5873|9:5914|6:5967|7:6026|9:6061|6:6114|7:6173|9:6215|6:6268|7:6327|9:6354|6:6407|7:6466|9:6509|0:6519|2:6527|r:1:o:2,9:n:6,7,9,1,2,8,5:k:1|r:2:o:1,9:n:6,7,9,1,2,8,5:k:1|r:4:o:4,6,7:n:8,9,5:k:6|r:5:o:8,5:n:7,9,1,2,6,8,5:k:|r:6:o:6,7:n:8,9,5:k:6|r:7:o:6,7:n:8,9,5:k:6|r:8:o:8,5:n:7,9,1,2,6,8,5:k:|r:9:o:1,2:n:6,7,9,1,2,8,5:k:1|s:2:7|R:2:260.0|R:5:175.0|R:4:245.0|R:-1:0|S:267.0:175.0:245.0:0/t:5218|k:7|k:8|2:1|2:60|3:76|4:119|5:137|6:190|7:287|8:306|9:328|0:351|1:423|2:450|3:461|5:475|7:534|8:549|9:576|0:591|1:655|3:663|5:703|7:762|8:803|0:825|1:4492|7:4551|8:4573|7:4632|8:4654|7:4713|8:4735|7:4794|8:4816|7:4875|8:4897|7:4956|8:4978|7:5037|8:5059|7:5118|4:5161|r:1:o:2,9:n:2,4,6,7,1,9,5,8:k:|r:2:o:1,9:n:2,4,6,7,1,9,5,8:k:|r:4:o:4,6,7:n:8,9,5:k:7|r:5:o:5,8:n:4,6,7,1,2,9,5,8:k:8|r:6:o:4,6,7:n:8,9,5:k:7|r:7:o:4,6,7:n:8,9,5:k:7|r:8:o:5,8:n:4,6,7,1,2,9,5,8:k:8|r:9:o:1,2:n:2,4,6,7,1,9,5,8:k:|s:4:57|R:1:175.0|R:5:290.0|R:4:245.0|R:-1:0|S:442.0:465.0:547.0:0/t:6050|k:1|k:3|k:8|1:1|1:60|2:131|3:146|4:189|5:207|6:260|8:279|9:301|0:322|1:394|2:421|3:443|4:486|5:500|6:553|8:568|9:599|1:646|4:689|5:729|6:782|8:823|0:844|1:882|3:891|4:934|8:956|9:997|3:1018|4:1061|8:1083|9:1123|0:1137|2:1178|4:1221|8:1243|9:1271|0:1290|2:1330|3:1338|4:1381|8:1403|9:1445|0:1453|2:1481|3:1496|4:1539|8:1561|9:1600|4:1643|5:1664|6:1717|8:1739|9:1777|4:1820|5:1841|6:1894|8:1916|9:1951|3:1972|4:2015|8:2037|9:2063|3:2080|4:2123|5:2137|6:2190|8:2212|9:2250|0:2272|2:2314|4:2357|8:2379|9:2416|0:2428|2:2467|4:2510|8:2532|9:2566|3:2581|4:2624|5:2632|6:2685|8:2707|9:2734|4:2777|5:2798|6:2851|8:2873|9:2903|3:2920|4:2963|5:2973|6:3026|8:3048|9:3074|4:3117|5:3138|6:3191|8:3213|9:3245|4:3288|5:3309|6:3362|8:3384|9:3413|4:3456|5:3477|6:3530|8:3552|9:3595|4:3638|5:3652|6:3705|8:3727|9:3759|4:3802|5:3823|6:3876|8:3898|9:3938|3:3948|4:3991|8:4013|9:4055|4:4098|5:4113|6:4166|8:4188|9:4221|4:4264|5:4285|6:4338|8:4360|9:4386|4:4429|5:4450|6:4503|8:4525|9:4559|3:4570|4:4613|5:4625|6:4678|8:4700|9:4735|4:4778|5:4799|6:4852|8:4874|9:4916|4:4959|5:4974|6:5027|8:5049|9:5082|4:5125|5:5146|6:5199|8:5221|9:5250|4:5293|5:5314|6:5367|8:5389|9:5414|4:5457|5:5478|6:5531|8:5553|9:5580|4:5623|5:5644|6:5697|8:5719|9:5761|4:5804|5:5819|6:5872|8:5894|9:5927|4:5970|5:5991|6:6044|r:1:o:2,9:n:1,2,4,6,9,5,8:k:1|r:2:o:1,9:n:1,2,4,6,9,5,8:k:1|r:4:o:4,6,7:n:8,9,5,1:k:|r:5:o:5,8:n:2,4,6,1,9,5,8:k:8|r:6:o:4,6,7:n:8,9,5,1:k:|r:7:o:4,6,7:n:8,9,5,1:k:|r:8:o:5,8:n:2,4,6,1,9,5,8:k:8|r:9:o:1,2:n:1,2,4,6,9,5,8:k:1|s:6:6|R:2:260.0|R:5:275.0|R:4:160.0|R:-1:0|S:702.0:740.0:713.0:0/t:7708|k:2|k:8|2:1|2:60|3:75|4:118|5:136|6:189|8:208|9:250|1:302|2:377|3:389|4:432|5:446|6:499|8:514|9:557|1:584|2:648|3:669|4:712|5:752|6:805|8:846|0:868|2:949|4:992|8:1014|9:7701|r:1:o:2,9:n:2,4,6,9,1,5,8:k:2|r:2:o:1,9:n:2,4,6,9,1,5,8:k:2|r:4:o:4,6,7:n:8,9,5,1:k:|r:5:o:5,8:n:4,6,9,1,2,5,8:k:8|r:6:o:4,6,7:n:8,9,5,1:k:|r:7:o:4,6,7:n:8,9,5,1:k:|r:8:o:5,8:n:4,6,9,1,2,5,8:k:8|r:9:o:1,2:n:2,4,6,9,1,5,8:k:2|s:9:7|R:1:260.0|R:5:275.0|R:4:160.0|R:-1:0|S:969.0:1015.0:873.0:0/t:5943|k:2|k:5|k:7|9:1|9:60|0:74|1:144|2:195|4:238|5:257|6:310|7:407|8:425|9:443|0:460|1:519|2:568|3:591|5:606|7:665|8:679|0:695|2:741|3:759|5:800|7:859|8:899|2:907|3:928|5:950|7:1009|8:1030|9:5936|r:1:o:2,9:n:9,1,2,4,6,7,5,8:k:2|r:2:o:1,9:n:9,1,2,4,6,7,5,8:k:2|r:4:o:4,6,7:n:8,9,5,1:k:7|r:5:o:5,8:n:1,2,4,6,7,5,8,9:k:5|r:6:o:4,6,7:n:8,9,5,1:k:7|r:7:o:4,6,7:n:8,9,5,1:k:7|r:8:o:5,8:n:1,2,4,6,7,5,8,9:k:5|r:9:o:1,2:n:9,1,2,4,6,7,5,8:k:2|s:9:7|R:1:275.0|R:8:290.0|R:4:260.0|R:-1:0|S:1251.0:1305.0:1133.0:0/'
+
+
 class Analyser:
     def __init__(self):
-        self.phase1_in = []
-        self.phase2_in = []
-        self.phase3_in = []
+        self.setup()
+        self.freq1 = []
+        self.freq2 = []
+        self.freq3 = []
 
+    def setup(self):
         self.phase1 = []
         self.phase2 = []
         self.phase3 = []
 
-        self.x_coors = []
-        self.y_coors = []
-
     def mean(self, data):
         return float(sum(data) / len(data))
 
-    def variance(self, data):
-        mu = self.mean(data)
+    def variance(self, data, mu=None):
+        mu = self.mean(data) if mu is None else mu
         return self.mean([(x - mu) ** 2 for x in data])
 
-    def std(self, data):
-        return sqrt(self.variance(data))
-
-    def covariance(self, data_x, data_y):
-        mu_x, mu_y = self.mean(data_x), self.mean(data_y)
-        return sum(map(lambda x, y: (x - mu_x) * (y - mu_y), data_x, data_y))/(len(data_x) - 1)
-
-    def pearson_coe(self, data_x, data_y):
-        cov = self.covariance(data_x, data_y)
-        return cov/(self.std(data_x) * self.std(data_y))
+    def std(self, data, mu=None):
+        return sqrt(self.variance(data)) if mu is None else sqrt(self.variance(data, mu))
 
     def skew(self, data):
         mu = self.mean(data)
@@ -58,26 +52,24 @@ class Analyser:
                 names = data.split(',')
                 npcs = [i for i, bot in enumerate(names) if bot == 'NPC']
             else:
-                bids = data.split(',')[1:]
+                data = data.split(',')
+                bids = data[1:]
 
                 bidder = []
                 npc_prevs = [None for _ in range(len(npcs))]
                 npc_bids = npc_prevs.copy()
                 for i, bid in enumerate(bids):
                     if len(bidder) != (len(set(bidder))):
-                        npc_prevs = [int(bids[i - 1].split(':')[-1]) if prev == None else prev for prev in npc_prevs]
+                        npc_prevs = [int(data[i - 1].split(':')[-1]) if prev == None else prev for prev in npc_prevs]
                         npc_bids = [0 if bid is None else bid for bid in npc_bids]
 
                         for j, prev in enumerate(npc_prevs):
                             if prev > true_mu * 3/4:
-                                analyser.phase3_in.append(npc_prevs[j])
-                                analyser.phase3.append(npc_bids[j])
+                                self.phase3.append(npc_bids[j])
                             elif prev > true_mu/4:
-                                analyser.phase2_in.append(npc_prevs[j])
-                                analyser.phase2.append(npc_bids[j])
+                                self.phase2.append(npc_bids[j])
                             else:
-                                analyser.phase1_in.append(npc_prevs[j])
-                                analyser.phase1.append(npc_bids[j])
+                                self.phase1.append(npc_bids[j])
 
                         bidder = [bidder[-1]]
                         npc_prevs = [None for _ in range(len(npcs))]
@@ -86,73 +78,42 @@ class Analyser:
                     bot, amt = list(map(lambda x: int(x), bid.split(':')))
 
                     if bot in npcs:
-                        npc_prevs[npcs.index(bot)] = int(bids[i - 1].split(':')[-1])
+                        npc_prevs[npcs.index(bot)] = int(data[i - 1].split(':')[-1])
                         npc_bids[npcs.index(bot)] = amt
 
                     bidder.append(bot)
 
+        self.add_data()
+        self.setup()
+
+    def add_data(self):
+        freq1 = (len(self.phase1) - self.phase1.count(0))/len(self.phase1) if len(self.phase1) != 0 else 0
+        freq2 = (len(self.phase2) - self.phase2.count(0))/len(self.phase2) if len(self.phase2) != 0 else 0
+        freq3 = (len(self.phase3) - self.phase3.count(0))/len(self.phase3) if len(self.phase3) != 0 else 0
+
+        self.freq1.append(freq1)
+        self.freq2.append(freq2)
+        self.freq3.append(freq3)
+
     def calculate(self):
-        self.x_coors = [1, 2, 3]
-        self.freqs = [
-            (len(self.phase1) - self.phase1.count(0))/len(self.phase1),
-            (len(self.phase2) - self.phase2.count(0))/len(self.phase2),
-            (len(self.phase3) - self.phase3.count(0))/len(self.phase3)
-        ]
-        self.skews = [
-            self.skew(self.phase1),
-            self.skew(self.phase2),
-            self.skew(self.phase3)
-        ]
-        self.pear_coes = [
-            self.pearson_coe(self.phase1_in, self.phase1),
-            self.pearson_coe(self.phase2_in, self.phase2),
-            self.pearson_coe(self.phase3_in, self.phase3)
-        ]
+        phase1_stdev = self.std(self.freq1, 0.64)
+        phase2_stdev = self.std(self.freq2, 0.16)
+        phase3_stdev = self.std(self.freq3, 0.04)
 
-    def show(self):
-        self.calculate()
-
-        m1, b1 = np.polyfit(np.array(self.x_coors), np.array(self.freqs), 1)
-        m2, b2 = np.polyfit(np.array(self.x_coors), np.array(self.skews), 1)
-        m3, b3 = np.polyfit(np.array(self.x_coors), np.array(self.pear_coes), 1)
-
-        plt.xticks(np.arange(min(self.x_coors), max(self.x_coors)+1, 1.0))
-
-        plt.scatter(1, self.freqs[0], alpha=0.5, label='Phase 1 | {:.2f}%'.format(self.freqs[0] * 100))
-        plt.scatter(2, self.freqs[1], alpha=0.5, label='Phase 2 | {:.2f}%'.format(self.freqs[1] * 100))
-        plt.scatter(3, self.freqs[2], alpha=0.5, label='Phase 3 | {:.2f}%'.format(self.freqs[2] * 100))
-
-        plt.scatter(1, self.skews[0], alpha=0.5, label='Phase 1 Skew | {}'.format(self.skews[0]))
-        plt.scatter(2, self.skews[1], alpha=0.5, label='Phase 2 Skew | {}'.format(self.skews[1]))
-        plt.scatter(3, self.skews[2], alpha=0.5, label='Phase 3 Skew | {}'.format(self.skews[2]))
-
-        plt.scatter(1, self.pear_coes[0], alpha=0.5, label='Phase 1 r | {}'.format(self.pear_coes[0]))
-        plt.scatter(2, self.pear_coes[1], alpha=0.5, label='Phase 2 r | {}'.format(self.pear_coes[1]))
-        plt.scatter(3, self.pear_coes[2], alpha=0.5, label='Phase 3 r | {}'.format(self.pear_coes[2]))
-
-        plt.plot(np.array(self.x_coors), m1 * np.array(self.x_coors) + b1, alpha=0.5, label='Frequencies')
-        plt.plot(np.array(self.x_coors), m2 * np.array(self.x_coors) + b2, alpha=0.5, label='Skews')
-        plt.plot(np.array(self.x_coors), m3 * np.array(self.x_coors) + b3, alpha=0.5, label='Coes')
-
-        plt.title('NPC Bidding Behaviour per Phase')
-        plt.xlabel('Phases')
-        plt.ylabel('% Density (Freq) | Skewness (Skew) | Correlation Coe (r)')
-        plt.legend(loc='upper left')
-        plt.show()
+        print(phase1_stdev, phase2_stdev, phase3_stdev)
 
 
 # MAIN
 START = time.time()
 
 analyser = Analyser()
-with concurrent.futures.ThreadPoolExecutor() as executor:
-    for filename in os.listdir(os.path.abspath('logs')):
-        with open(os.path.abspath('logs') + '/' + filename, 'r') as f:
-            executor.submit(analyser.process(f))
+for filename in os.listdir(os.path.abspath('logs')):
+    with open(os.path.abspath('logs') + '/' + filename, 'r') as f:
+        analyser.process(f)
+
+analyser.calculate()
 
 END = time.time()
 
 print('Analysed {} logs.\n'.format(len(os.listdir(os.path.abspath('logs')))))
 print('Runtime: {:.2f}/s'.format(END - START))
-
-analyser.show()
